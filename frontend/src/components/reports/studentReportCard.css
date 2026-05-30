@@ -1,0 +1,250 @@
+/* Final production report card — A4 PDF / print */
+
+.src-sheet {
+  width: 210mm;
+  max-width: 100%;
+  min-height: 297mm;
+  margin: 0 auto;
+  padding: 14mm 12mm;
+  box-sizing: border-box;
+  background: #fff;
+  color: #111827;
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  font-size: 11pt;
+  line-height: 1.4;
+}
+
+.src-header {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-bottom: 2px solid #111827;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.src-header-row {
+  display: table-row;
+}
+
+.src-header-logo,
+.src-header-center,
+.src-header-photo {
+  display: table-cell;
+  vertical-align: top;
+}
+
+.src-header-logo {
+  width: 100px;
+}
+
+.src-header-logo img {
+  max-width: 80px;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+.src-header-center {
+  text-align: center;
+  padding: 0 8px;
+}
+
+.src-school-name {
+  font-size: 18pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 4px;
+}
+
+.src-school-address,
+.src-school-year {
+  font-size: 9.5pt;
+  color: #374151;
+  margin: 2px 0;
+}
+
+.src-header-photo {
+  width: 100px;
+  text-align: right;
+}
+
+.src-photo {
+  width: 100px;
+  height: 120px;
+  border: 1px solid #6b7280;
+  display: inline-block;
+  object-fit: cover;
+  background: #fff;
+}
+
+.src-photo-empty {
+  width: 100px;
+  height: 120px;
+  border: 1px solid #6b7280;
+  display: inline-block;
+  background: #fff;
+}
+
+.src-title {
+  text-align: center;
+  font-size: 11pt;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 12px 0 16px;
+}
+
+.src-student {
+  border: 1px solid #9ca3af;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+}
+
+.src-student-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+
+.src-field-label {
+  font-size: 8.5pt;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.src-field-value {
+  font-size: 10.5pt;
+  font-weight: 600;
+  margin-top: 1px;
+}
+
+.src-section-title {
+  font-size: 10.5pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+  letter-spacing: 0.5px;
+}
+
+.src-table-wrap {
+  margin-bottom: 20px;
+  page-break-inside: avoid;
+}
+
+.src-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 10pt;
+}
+
+.src-table th,
+.src-table td {
+  border: 1px solid #374151;
+  padding: 7px 8px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.src-table th {
+  background: #E8C4B8;
+  color: #333;
+  font-weight: 600;
+  font-size: 9.5pt;
+  border: 1px solid #9ca3af;
+}
+
+.src-table th.src-th-subject {
+  text-align: left;
+  background: #E8C4B8;
+}
+
+.src-table td.src-td-subject {
+  text-align: left;
+  font-weight: 600;
+  background: #F5E6E0;
+}
+
+.src-table td.src-td-total {
+  background: #E8C4B8;
+  font-weight: 700;
+}
+
+.src-table tbody tr:nth-child(even) {
+  background: #FCE7E1;
+}
+
+.src-table tbody tr:nth-child(odd) {
+  background: #FEF4F1;
+}
+
+.src-table tbody tr.src-footer-row td {
+  background: #E8C4B8;
+  font-weight: 700;
+  font-size: 9.5pt;
+  color: #333;
+}
+
+.src-table tbody tr.src-footer-row td.src-footer-label {
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.src-table tbody tr.src-footer-row td.src-footer-value {
+  background: #E8C4B8;
+  text-align: center;
+  font-size: 10.5pt;
+}
+
+.src-marks-table th,
+.src-grade-table th {
+  background: #E8C4B8;
+  color: #333;
+}
+
+.src-marks-table {
+  margin-bottom: 14px;
+}
+
+.src-grade-table {
+  margin-bottom: 14px;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  .src-sheet {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .src-table-wrap {
+    page-break-inside: avoid;
+  }
+
+  .src-table tr {
+    page-break-inside: avoid;
+  }
+}
+
+/* Additional styling for better visual hierarchy */
+.src-section-title {
+  border-left: 4px solid #E8C4B8;
+  padding-left: 8px;
+}
+
+.src-table {
+  border-collapse: collapse;
+}
+
+.src-marks-table tbody tr td,
+.src-grade-table tbody tr td {
+  border: 0.5px solid #999;
+}
