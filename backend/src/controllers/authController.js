@@ -13,18 +13,37 @@ const generateToken = (id) =>
 export const register = asyncHandler(async (req, res) => {
   const { name, email, mobileNo, password, role } = req.body;
 
+  if (!name || !email || !password) {
+    throw ApiError.badRequest('Name, email and password are required');
+  }
+
   const exists = await User.findOne({ email });
   if (exists) throw ApiError.badRequest('Email already registered');
 
   const user = await User.create({ name, email, mobileNo, password, role });
 
+  const token = generateToken(user._id);
+
+  await logActivity({
+    userId: user._id,
+    action: ACTIVITY_TYPES.CREATE,
+    module: 'auth',
+    description: `${user.name} registered`,
+    ipAddress: req.ip,
+  });
+
   res.status(201).json({
     success: true,
     data: {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        mobileNo: user.mobileNo,
+        role: user.role,
+        profilePhoto: user.profilePhoto,
+      },
     },
   });
 });
@@ -78,9 +97,16 @@ export const getMe = asyncHandler(async (req, res) => {
 
 export const updateProfile = asyncHandler(async (req, res) => {
   const { name, mobileNo } = req.body;
+
+  // req.file.path is the Cloudinary URL when using CloudinaryStorage
+  const updateData = { name, mobileNo };
+  if (req.file) {
+    updateData.profilePhoto = req.file.path; // Cloudinary returns the URL in file.path
+  }
+
   const user = await User.findByIdAndUpdate(
     req.user._id,
-    { name, mobileNo, ...(req.file && { profilePhoto: `/uploads/profiles/${req.file.filename}` }) },
+    updateData,
     { new: true, runValidators: true }
   );
 

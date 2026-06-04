@@ -372,6 +372,10 @@ export const buildFullReportPayload = ({
       address: student.address,
       photo: student.photo || '',
       bloodGroup: student.bloodGroup,
+      // Spread all custom fields so report card can access any dynamic field
+      ...(student.customFields instanceof Map
+        ? Object.fromEntries(student.customFields)
+        : (student.customFields || {})),
     },
     school: {
       name: schoolSettings?.schoolName || config.schoolHeader?.schoolName || 'School Name',
@@ -381,6 +385,10 @@ export const buildFullReportPayload = ({
       email: schoolSettings?.email || '',
       logo: schoolSettings?.logo || config.schoolHeader?.logo || '',
       principalName: schoolSettings?.principalName || '',
+      diseCode: schoolSettings?.diseCode || '',
+      district: schoolSettings?.district || '',
+      block: schoolSettings?.block || '',
+      state: schoolSettings?.state || '',
     },
     academicYear: academicSession?.name || '',
     marksTests: marksTests.map((t, i) => {

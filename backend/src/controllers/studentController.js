@@ -787,8 +787,9 @@ const STANDARD_FIELDS = new Set([
  */
 function attachUploadedFiles(data, files) {
   if (!Array.isArray(files)) return;
-  files.forEach(({ fieldname, filename }) => {
-    data[fieldname] = `/uploads/students/${filename}`;
+  files.forEach((file) => {
+    // Cloudinary stores the URL in file.path
+    data[file.fieldname] = file.path || `/uploads/students/${file.filename}`;
   });
 }
 
@@ -1124,7 +1125,6 @@ export const uploadStudentDocument = asyncHandler(async (req, res) => {
   const { documentType, title } = req.body;
 
   if (!documentType) {
-    if (req.file) fs.unlinkSync(req.file.path);
     throw ApiError.badRequest('Document type is required');
   }
 
@@ -1135,18 +1135,18 @@ export const uploadStudentDocument = asyncHandler(async (req, res) => {
   });
 
   if (!student) {
-    if (req.file) fs.unlinkSync(req.file.path);
     throw ApiError.notFound('Student not found');
   }
 
   if (!req.file) throw ApiError.badRequest('Document file is required');
 
+  // Cloudinary stores the URL in req.file.path
   const document = await StudentDocument.create({
     studentId:    student._id,
     sessionId:    req.sessionId,
     documentType,
     title:        title || documentType,
-    filePath:     `/uploads/documents/${req.file.filename}`,
+    filePath:     req.file.path || `/uploads/documents/${req.file.filename}`,
     fileName:     req.file.originalname,
     fileSize:     req.file.size,
     mimeType:     req.file.mimetype,

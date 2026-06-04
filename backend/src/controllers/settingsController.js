@@ -18,7 +18,7 @@ export const updateSettings = asyncHandler(async (req, res) => {
     { sessionId: req.sessionId },
     {
       ...req.body,
-      ...(req.file && { logo: `/uploads/logos/${req.file.filename}` }),
+      ...(req.file && { logo: req.file.path || `/uploads/logos/${req.file.filename}` }),
     },
     { new: true, upsert: true, runValidators: true }
   );

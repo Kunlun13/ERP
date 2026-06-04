@@ -8,3 +8,4 @@ export { default as Mark } from './Mark.js';
 export { default as ReportTemplate } from './ReportTemplate.js';
 export { default as ActivityLog } from './ActivityLog.js';
 export { default as SchoolSettings } from './SchoolSettings.js';
+export { default as Attendance } from './Attendance.js';

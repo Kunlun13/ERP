@@ -1037,11 +1037,12 @@ export default function StudentReportCard({ data, onDownloadPDF }) {
 
   const { student = {}, school = {}, marksSection, gradeSection } = data;
 
-  const schoolName = student.schoolName || school.name || 'School Name Here';
-  const schoolAddr = [student.block || school.block, student.district || school.district]
+  const schoolName = school.schoolName || school.name || student.schoolName || 'School Name Here';
+  const schoolAddr = [school.block || student.block, school.district || student.district, school.state]
     .filter(Boolean).join(', ') || 'Block, District, State';
   const session   = data.session   || '2024–25';
   const className = data.className || student.class || '';
+  const diseCode  = school.diseCode || student.dise || '';
 
   const handlePDF = async () => {
     if (onDownloadPDF) { onDownloadPDF(); return; }
@@ -1142,20 +1143,22 @@ export default function StudentReportCard({ data, onDownloadPDF }) {
             <table style={{ flex: 1, borderCollapse: 'collapse',
                             tableLayout: 'fixed', fontSize: 9 }}>
               <tbody>
+                <InfoRow l1="छात्र का नाम / Name"     v1={student.name}
+                         l2="रोल नं. / Roll No"        v2={student.rollNo} />
                 <InfoRow l1="पिता का नाम / Father"    v1={student.fatherName}
                          l2="माता का नाम / Mother"    v2={student.motherName} />
-                <InfoRow l1="जन्म तिथि (अंक) / DOB"  v1={student.dob}
-                         l2="जन्म तिथि (शब्द) / DOB" v2={student.dobWords} />
-                <InfoRow l1="समग्र आईडी / Samagra ID" v1={student.samgraId}
-                         l2="रोल नं. / Roll No"        v2={student.rollNo} />
-                <InfoRow l1="समग्र नाम / Samagra Name" v1={student.samgraName}
-                         l2="आधार आईडी / Aadhaar"     v2={student.aadhaarId} />
-                <InfoRow l1="पंजी क्र. / Scholar No"  v1={student.scholarNo}
-                         l2="DISE Code"                v2={student.dise} />
-                <InfoRow l1="दिव्यांग / Special Need" v1={student.specialNeed || 'No'}
-                         l2="जिला / District"          v2={student.district} />
-                <InfoRow l1="विद्यालय / School"       v1={student.schoolName}
-                         l2="ब्लॉक / Block"           v2={student.block} />
+                <InfoRow l1="जन्म तिथि / DOB"         v1={student.dobFormatted || student.dob}
+                         l2="लिंग / Gender"            v2={student.gender} />
+                <InfoRow l1="कक्षा / Class"            v1={student.class}
+                         l2="वर्ग / Section"           v2={student.section} />
+                <InfoRow l1="मोबाइल / Mobile"          v1={student.mobileNo}
+                         l2="ईमेल / Email"             v2={student.email} />
+                <InfoRow l1="रक्त समूह / Blood Group" v1={student.bloodGroup}
+                         l2="पता / Address"            v2={student.address} />
+                <InfoRow l1="DISE Code"                v1={diseCode}
+                         l2="जिला / District"          v2={school.district || student.district} />
+                <InfoRow l1="विद्यालय / School"       v1={schoolName}
+                         l2="ब्लॉक / Block"           v2={school.block || student.block} />
               </tbody>
             </table>
 

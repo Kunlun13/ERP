@@ -8,6 +8,7 @@ import markRoutes from './markRoutes.js';
 import analyticsRoutes from './analyticsRoutes.js';
 import reportRoutes from './reportRoutes.js';
 import settingsRoutes from './settingsRoutes.js';
+import attendanceRoutes from './attendanceRoutes.js';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use('/marks', markRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/reports', reportRoutes);
 router.use('/settings', settingsRoutes);
+router.use('/attendance', attendanceRoutes);
 
 export default router;

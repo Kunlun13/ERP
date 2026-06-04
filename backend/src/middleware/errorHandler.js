@@ -106,7 +106,7 @@ const errorHandler = (err, req, res, next) => {
     message = err.message;
   }
 
-  console.error(`[${req.method}] ${req.originalUrl} - ${message}`);
+  console.error(`[${req.method}] ${req.originalUrl} - ${message}`, err.stack || err);
 
   res.status(statusCode).json({
     success: false,

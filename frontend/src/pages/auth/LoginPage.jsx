@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { GraduationCap } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { login, clearError } from '../../store/slices/authSlice';
@@ -59,7 +59,13 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <p className="text-xs text-center text-gray-400 mt-6">
+        <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-6">
+          Don&apos;t have an account?{' '}
+          <Link to="/signup" className="text-primary-600 hover:text-primary-700 font-medium">
+            Sign Up
+          </Link>
+        </p>
+        <p className="text-xs text-center text-gray-400 mt-2">
           Demo: admin@school.com / admin123
         </p>
       </div>

@@ -7,6 +7,7 @@ import { fetchSessions } from './store/slices/sessionSlice';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './components/layout/DashboardLayout';
 import LoginPage from './pages/auth/LoginPage';
+import SignupPage from './pages/auth/SignupPage';
 import SessionSelectPage from './pages/auth/SessionSelectPage';
 import DashboardPage from './pages/DashboardPage';
 import DraftBuilderPage from './pages/DraftBuilderPage';
@@ -17,6 +18,7 @@ import MarksPage from './pages/MarksPage';
 import AnalysisPage from './pages/AnalysisPage';
 import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
+import AttendancePage from './pages/AttendancePage';
 
 function AppRoutes() {
   const dispatch = useDispatch();
@@ -34,6 +36,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
       <Route
         path="/select-session"
         element={
@@ -60,6 +63,7 @@ function AppRoutes() {
         <Route path="analysis" element={<AnalysisPage />} />
         <Route path="reports" element={<ReportsPage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="attendance" element={<AttendancePage />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

@@ -1,123 +1,66 @@
-// import multer from 'multer';
-// import path from 'path';
-// import { fileURLToPath } from 'url';
-// import fs from 'fs';
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// const ensureDir = (dir) => {
-//   if (!fs.existsSync(dir)) {
-//     fs.mkdirSync(dir, { recursive: true });
-//   }
-// };
-
-// const storage = (folder) =>
-//   multer.diskStorage({
-//     destination: (req, file, cb) => {
-//       const uploadPath = path.join(__dirname, '../../uploads', folder);
-//       ensureDir(uploadPath);
-//       cb(null, uploadPath);
-//     },
-//     filename: (req, file, cb) => {
-//       const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-//       cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
-//     },
-//   });
-
-// const fileFilter = (req, file, cb) => {
-//   const allowed = /jpeg|jpg|png|gif|webp/;
-//   const ext = allowed.test(path.extname(file.originalname).toLowerCase());
-//   const mime = allowed.test(file.mimetype);
-//   if (ext && mime) {
-//     cb(null, true);
-//   } else {
-//     cb(new Error('Only image files are allowed'), false);
-//   }
-// };
-
-// const documentFileFilter = (req, file, cb) => {
-//   const allowed = /jpeg|jpg|png|gif|webp|pdf|doc|docx|xls|xlsx|txt/;
-//   const ext = allowed.test(path.extname(file.originalname).toLowerCase());
-//   const allowedMimes = /image\/|application\/pdf|application\/msword|application\/vnd\.|text\/plain/;
-//   const mime = allowedMimes.test(file.mimetype);
-//   if (ext && mime) {
-//     cb(null, true);
-//   } else {
-//     cb(new Error('Only image and document files are allowed'), false);
-//   }
-// };
-
-// const maxSize = parseInt(process.env.MAX_FILE_SIZE, 10) || 5 * 1024 * 1024;
-// const maxDocSize = parseInt(process.env.MAX_DOC_SIZE, 10) || 10 * 1024 * 1024;
-
-// export const uploadProfile = multer({
-//   storage: storage('profiles'),
-//   limits: { fileSize: maxSize },
-//   fileFilter,
-// }).single('profilePhoto');
-
-// export const uploadStudentPhoto = multer({
-//   storage: storage('students'),
-//   limits: { fileSize: maxSize },
-//   fileFilter,
-// }).fields([
-//   { name: 'photo', maxCount: 1 },
-//   { name: 'aadhaarCard', maxCount: 1 },
-//   { name: 'birthCertificate', maxCount: 1 },
-//   { name: 'casteCertificate', maxCount: 1 },
-//   { name: 'incomeCertificate', maxCount: 1 },
-//   { name: 'domicileCertificate', maxCount: 1 },
-//   { name: 'otherDocument', maxCount: 5 },
-// ]);
-
-// export const uploadLogo = multer({
-//   storage: storage('logos'),
-//   limits: { fileSize: maxSize },
-//   fileFilter,
-// }).single('logo');
-
-// export const uploadStudentDocument = multer({
-//   storage: storage('documents'),
-//   limits: { fileSize: maxDocSize },
-//   fileFilter: documentFileFilter,
-// }).single('document');
-
-
-
-
-
 import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-const ensureDir = (dir) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-};
+export { cloudinary };
 
-const storage = (folder) =>
-  multer.diskStorage({
-    destination: (req, file, cb) => {
-      const uploadPath = path.join(__dirname, '../../uploads', folder);
-      ensureDir(uploadPath);
-      cb(null, uploadPath);
-    },
-    filename: (req, file, cb) => {
-      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-      cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
-    },
-  });
+// ── Cloudinary storage factories ─────────────────────────────────────────────
 
-const fileFilter = (req, file, cb) => {
+const profileStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'school_erp/profiles',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+    transformation: [{ width: 400, height: 400, crop: 'fill' }],
+  },
+});
+
+const studentStorage = new CloudinaryStorage({
+  cloudinary,
+  params: (req, file) => ({
+    folder: 'school_erp/students',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+    transformation: [{ width: 600, height: 600, crop: 'limit' }],
+    public_id: `${Date.now()}-${file.fieldname}`,
+  }),
+});
+
+const logoStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'school_erp/logos',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+    transformation: [{ width: 300, height: 300, crop: 'limit' }],
+  },
+});
+
+const documentStorage = new CloudinaryStorage({
+  cloudinary,
+  params: (req, file) => {
+    const isImage = /image\//.test(file.mimetype);
+    return {
+      folder: 'school_erp/documents',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf'],
+      resource_type: isImage ? 'image' : 'raw',
+      public_id: `${Date.now()}-${file.originalname.replace(/\s+/g, '_')}`,
+    };
+  },
+});
+
+// ── File filters ──────────────────────────────────────────────────────────────
+
+const imageFileFilter = (req, file, cb) => {
   const allowed = /jpeg|jpg|png|gif|webp/;
   const ext = allowed.test(path.extname(file.originalname).toLowerCase());
-  const mime = allowed.test(file.mimetype);
+  const mime = /image\//.test(file.mimetype);
   if (ext && mime) {
     cb(null, true);
   } else {
@@ -126,42 +69,42 @@ const fileFilter = (req, file, cb) => {
 };
 
 const documentFileFilter = (req, file, cb) => {
-  const allowed = /jpeg|jpg|png|gif|webp|pdf|doc|docx|xls|xlsx|txt/;
-  const ext = allowed.test(path.extname(file.originalname).toLowerCase());
-  const allowedMimes = /image\/|application\/pdf|application\/msword|application\/vnd\.|text\/plain/;
+  const allowedExt = /jpeg|jpg|png|gif|webp|pdf/;
+  const ext = allowedExt.test(path.extname(file.originalname).toLowerCase());
+  const allowedMimes = /image\/|application\/pdf/;
   const mime = allowedMimes.test(file.mimetype);
   if (ext && mime) {
     cb(null, true);
   } else {
-    cb(new Error('Only image and document files are allowed'), false);
+    cb(new Error('Only image and PDF files are allowed'), false);
   }
 };
 
 const maxSize = parseInt(process.env.MAX_FILE_SIZE, 10) || 5 * 1024 * 1024;
-const maxDocSize = parseInt(process.env.MAX_DOC_SIZE, 10) || 10 * 1024 * 1024;
+const maxDocSize = 10 * 1024 * 1024;
+
+// ── Exported multer instances ─────────────────────────────────────────────────
 
 export const uploadProfile = multer({
-  storage: storage('profiles'),
+  storage: profileStorage,
   limits: { fileSize: maxSize },
-  fileFilter,
+  fileFilter: imageFileFilter,
 }).single('profilePhoto');
 
-// ✅ Changed from .fields([...]) to .any() so dynamic image fields from
-// custom templates are accepted regardless of their field name.
 export const uploadStudentPhoto = multer({
-  storage: storage('students'),
+  storage: studentStorage,
   limits: { fileSize: maxSize },
-  fileFilter,
+  fileFilter: imageFileFilter,
 }).any();
 
 export const uploadLogo = multer({
-  storage: storage('logos'),
+  storage: logoStorage,
   limits: { fileSize: maxSize },
-  fileFilter,
+  fileFilter: imageFileFilter,
 }).single('logo');
 
 export const uploadStudentDocument = multer({
-  storage: storage('documents'),
+  storage: documentStorage,
   limits: { fileSize: maxDocSize },
   fileFilter: documentFileFilter,
 }).single('document');

@@ -9,6 +9,7 @@ import {
   FileText,
   Settings,
   GraduationCap,
+  ClipboardCheck,
 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
@@ -20,6 +21,7 @@ const navItems = [
   { path: '/marks', label: 'Marks Entry', icon: PenLine },
   { path: '/analysis', label: 'Analysis', icon: BarChart3 },
   { path: '/reports', label: 'Report Generation', icon: FileText },
+  { path: '/attendance', label: 'Attendance', icon: ClipboardCheck },
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
 

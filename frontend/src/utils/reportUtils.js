@@ -808,8 +808,8 @@ const buildSectionRows = (table, kind) => {
 export function normalizeReportCard(reportData) {
   if (!reportData?.tables) return null;
 
-  const student = reportData.student || {};
-  const school = reportData.schoolHeader || reportData.school || {};
+  const student = { ...(reportData.student || {}) };
+  const school = { ...(reportData.schoolHeader || reportData.school || {}) };
 
   const marksTable = reportData.tables.find((t) => t.tableType === 'marks');
   const gradeTable = reportData.tables.find((t) => t.tableType === 'grade');
@@ -817,9 +817,23 @@ export function normalizeReportCard(reportData) {
   const marksTests = getTableTests(marksTable);
   const gradeTests = getTableTests(gradeTable);
 
+  // Format DOB for display if present
+  if (student.dob) {
+    try {
+      const d = new Date(student.dob);
+      if (!isNaN(d)) {
+        student.dobFormatted = d.toLocaleDateString('en-IN', {
+          day: '2-digit', month: 'short', year: 'numeric',
+        });
+      }
+    } catch { /* ignore */ }
+  }
+
   return {
     student,
     school,
+    session: reportData.academicYear || '',
+    className: student.class || '',
 
     marksSection: marksTable
       ? {

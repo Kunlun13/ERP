@@ -12,6 +12,17 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
   }
 });
 
+export const signup = createAsyncThunk('auth/signup', async (formData, { rejectWithValue }) => {
+  try {
+    const { data } = await api.post('/auth/register', formData);
+    localStorage.setItem('token', data.data.token);
+    localStorage.setItem('user', JSON.stringify(data.data.user));
+    return data.data;
+  } catch (err) {
+    return rejectWithValue(err.message || 'Registration failed');
+  }
+});
+
 export const fetchMe = createAsyncThunk('auth/fetchMe', async (_, { rejectWithValue }) => {
   try {
     const { data } = await api.get('/auth/me');
@@ -53,6 +64,16 @@ const authSlice = createSlice({
         state.token = action.payload.token;
       })
       .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(signup.pending, (state) => { state.loading = true; state.error = null; })
+      .addCase(signup.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+      })
+      .addCase(signup.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

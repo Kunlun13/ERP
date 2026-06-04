@@ -60,7 +60,7 @@ export default function SettingsPage() {
         <div className="grid lg:grid-cols-2 gap-6">
           <Card title="School Settings">
             <div className="space-y-4">
-              {['schoolName', 'address', 'contact', 'email', 'principalName'].map((field) => (
+              {['schoolName', 'address', 'contact', 'email', 'principalName', 'diseCode', 'district', 'block', 'state'].map((field) => (
                 <Input
                   key={field}
                   label={field.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase())}
